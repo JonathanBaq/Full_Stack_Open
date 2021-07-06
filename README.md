@@ -8,4 +8,6 @@ This is my personal repository for the Full Stack Open 2021 Course Exercises
   * anecdotes
   
 ## Part 2 : Collection Rendering, Modules, Forms, Getting and Altering Data on a Server, Adding Styles on React App
- 
+  * courseinformation
+  * dataforcountries
+  * phonebook
