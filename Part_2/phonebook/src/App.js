@@ -105,6 +105,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
       <h2>Add a new contact</h2>
       <PersonForm 
@@ -114,7 +115,6 @@ const App = () => {
         handleNameChange={handleNameChange}
         handleNumberChange={handleNumberChange}
       />
-      <Notification message={message}/>
       <h2>Numbers</h2>
         {personsToShow.map(person =>
           <Person key={person.id} person={person} deletePerson={deletePerson}/>)}
