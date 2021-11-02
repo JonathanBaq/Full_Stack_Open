@@ -78,9 +78,9 @@ const App = () => {
     const updatedBlog = {
       ...blog, likes,
     }
-    
+
     const response = await blogService.update(id, updatedBlog)
-    if(response){
+    if (response) {
       const newList = blogs.map((blog) =>
         blog.id === id ? updatedBlog : blog
       )
@@ -89,9 +89,9 @@ const App = () => {
   }
 
   const handleDelete = async (id, title, author) => {
-    if(window.confirm(`Remove blog ${title} by ${author}?`)) {
+    if (window.confirm(`Remove blog ${title} by ${author}?`)) {
       await blogService.remove(id)
-      setBlogs(blogs.filter(blog => blog.id !== id).sort((a,b) => b.likes - a.likes))
+      setBlogs(blogs.filter(blog => blog.id !== id).sort((a, b) => b.likes - a.likes))
       setMessage('Blog removed.')
       setTimeout(() => {
         setMessage(null)
@@ -113,7 +113,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='Create New Blog' ref={blogFormRef}>
-      <BlogForm createBlog={addBlog}/>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
@@ -126,12 +126,12 @@ const App = () => {
         loginForm() :
         <div>
           <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>Logout</button> 
+          <button onClick={handleLogout}>Logout</button>
           {blogForm()}
           <div>
             {blogs
-              .sort((a,b) => b.likes - a.likes)
-              .map(blog=>
+              .sort((a, b) => b.likes - a.likes)
+              .map(blog =>
                 <Blog
                   key={blog.id}
                   blog={blog}
@@ -139,7 +139,7 @@ const App = () => {
                   handleLike={handleLike}
                   handleDelete={handleDelete}
                 />
-            )}
+              )}
           </div>
         </div>
       }
