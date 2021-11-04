@@ -25,6 +25,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      console.log(user)
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -128,7 +129,7 @@ const App = () => {
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>Logout</button>
           {blogForm()}
-          <div>
+          <div id='blogs'>
             {blogs
               .sort((a, b) => b.likes - a.likes)
               .map(blog =>

@@ -10,7 +10,7 @@ const blogStyle = {
 
 const Blog = ({ blog, user, handleLike, handleDelete }) => {
   const [visible, setVisible] = useState(false)
-
+  console.log(user, blog)
   const displayBlog = () => {
     return (
       <div>
@@ -19,21 +19,21 @@ const Blog = ({ blog, user, handleLike, handleDelete }) => {
         </p>
         <p>
           Likes: {blog.likes}
-          <button onClick={() => handleLike(blog.id)}>like</button>
+          <button id='like-button' onClick={() => handleLike(blog.id)}>like</button>
         </p>
         {user.username === blog.user.username
-          ? <button onClick={() => handleDelete(blog.id, blog.title, blog.author)}>delete</button>
+          ? <button id='delete-button' onClick={() => handleDelete(blog.id, blog.title, blog.author)}>delete</button>
           : ''}
       </div>
     )
   }
 
   return (
-    <div style={blogStyle} className='blog'>
+    <div id='blog' style={blogStyle} className='blog'>
       <h2>{blog.title}</h2>
       <p>Author: {blog.author}</p>
       {visible && displayBlog()}
-      <button onClick={() => setVisible(!visible)}>
+      <button id='view-button' onClick={() => setVisible(!visible)}>
         {visible ? 'hide' : 'view'}
       </button>
     </div >
