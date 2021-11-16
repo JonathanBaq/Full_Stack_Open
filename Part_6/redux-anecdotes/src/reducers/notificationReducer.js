@@ -9,13 +9,16 @@ const notificationReducer = (state = null, action) => {
 }
 
 export const setNotification = (message, timeout) => {
+  window.clearTimeout(window.timeout)
+
   const object = {
     type: 'SET_NOTIF',
     message: message
   }
   return async dispatch => {
     await dispatch(object)
-    setTimeout(() => {
+
+    window.timeout = setTimeout(() => {
       dispatch({
         ...object,
         message: null

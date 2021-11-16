@@ -18,7 +18,9 @@ const Anecdote = ({ anecdote, handleClick }) => {
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
     if (filter !== null) {
-      return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
+      return anecdotes.filter(anecdote =>
+        anecdote.content.toLowerCase()
+          .includes(filter.toLowerCase()))
     }
     return anecdotes
   })
@@ -34,7 +36,7 @@ const AnecdoteList = () => {
               anecdote={anecdote}
               handleClick={() => {
                 dispatch(increaseVote(anecdote))
-                dispatch(setNotification(`You voted '${anecdote.content}'`, 10))
+                dispatch(setNotification(`You voted '${anecdote.content}'`, 5))
               }
               }
             />
