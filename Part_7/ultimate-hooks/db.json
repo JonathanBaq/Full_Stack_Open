@@ -1,0 +1,65 @@
+{
+  "notes": [
+    {
+      "content": "custom-hooks are grat",
+      "id": 1
+    },
+    {
+      "content": "the best featrure ever <3",
+      "id": 2
+    },
+    {
+      "content": "asd",
+      "id": 3
+    },
+    {
+      "content": "asd",
+      "id": 4
+    },
+    {
+      "content": "asd",
+      "id": 5
+    },
+    {
+      "content": "qwe",
+      "id": 6
+    },
+    {
+      "content": "qwe",
+      "id": 7
+    },
+    {
+      "content": "qwe",
+      "id": 8
+    },
+    {
+      "content": "qwe",
+      "id": 9
+    },
+    {
+      "content": "ghj",
+      "id": 10
+    },
+    {
+      "content": "ewt",
+      "id": 11
+    }
+  ],
+  "persons": [
+    {
+      "name": "mluukkai",
+      "number": "040-5483923",
+      "id": 1
+    },
+    {
+      "name": "kaltsoon",
+      "number": "045-2323456",
+      "id": 2
+    },
+    {
+      "name": "asd",
+      "number": "123",
+      "id": 3
+    }
+  ]
+}
