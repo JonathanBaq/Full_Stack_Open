@@ -1,40 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import {
+  Routes,
+  Route,
+  useMatch,
+  Link
+} from 'react-router-dom'
+
+import BlogList from './components/BlogList'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
+import UserList from './components/UserList'
+import User from './components/User'
 
-import blogService from './services/blogs'
 import loginService from './services/login'
 
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, increaseLikes, removeBlog } from './reducers/blogReducer'
+import { initializeBlogs, increaseLikes, removeBlog, addBlog } from './reducers/blogReducer'
+import { setLoggedUser, setUser } from './reducers/loggedUserReducer'
+import { initializeUsers } from './reducers/userReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
-  
+
   const blogFormRef = useRef()
   const dispatch = useDispatch()
-  const blogs1 = useSelector(state => state.blogs)
+  const blogs = useSelector(state => state.blogs)
+  const users = useSelector(state => state.users)
+  const currentUser = useSelector(state => state.loggedUser)
+
+  const userMatch = useMatch('/users/:id')
+  const user = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+
+  const blogMatch = useMatch('/blogs/:id')
+  console.log(blogMatch)
+  const blog = blogMatch
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
+    : null
 
   useEffect(() => {
     dispatch(initializeBlogs())
   }, [dispatch])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      console.log(user)
-      setUser(user)
-      blogService.setToken(user.token)
-    }
-  }, [])
+    dispatch(initializeUsers())
+  }, [dispatch])
+
+  useEffect(() => {
+    dispatch(setLoggedUser())
+  }, [dispatch])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -47,8 +68,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -59,67 +79,81 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
-  }
-
-  const addBlog = (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        dispatch(setNotification(`A new blog '${returnedBlog.title}' by ${returnedBlog.author} added.`, 5))
-      })
+    dispatch(setUser(null))
   }
 
   const loginForm = () => (
-    <Togglable buttonLabel='Login'>
-      <LoginForm
-        username={username}
-        password={password}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        handleSubmit={handleLogin}
-      />
-    </Togglable>
+    <LoginForm
+      username={username}
+      password={password}
+      handleUsernameChange={({ target }) => setUsername(target.value)}
+      handlePasswordChange={({ target }) => setPassword(target.value)}
+      handleSubmit={handleLogin}
+    />
   )
+
+  const createBlog = (blog) => {
+    blogFormRef.current.toggleVisibility()
+    dispatch(addBlog(blog))
+    dispatch(setNotification(`A new blog '${blog.title}' by ${blog.author} added.`, 5))
+
+  }
 
   const blogForm = () => (
     <Togglable buttonLabel='Create New Blog' ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
+      <BlogForm createBlog={createBlog} />
     </Togglable>
   )
 
   return (
     <div>
+      <div>
+        <Link style={{ padding: 5 }} to='/'>Home</Link>
+        <Link style={{ padding: 5 }} to='/users'>Users</Link>
+      </div>
       <h1>Blogs</h1>
       <Notification />
 
-      {user === null ?
-        loginForm() :
+      {currentUser === null
+        ? loginForm()
+        :
         <div>
-          <p>{user.name} logged in</p>
+          <p>{currentUser.name} logged in</p>
           <button onClick={handleLogout}>Logout</button>
           {blogForm()}
-          <div id='blogs'>
-            {blogs1
-              .sort((a, b) => b.likes - a.likes)
-              .map(blog =>
-                <Blog
-                  key={blog.id}
-                  blog={blog}
-                  user={user}
-                  handleLike={() => {
-                    dispatch(increaseLikes(blog))
-                  }}
-                  handleDelete={() => {
-                    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-                      dispatch(removeBlog(blog.id))
-                      dispatch(setNotification('Blog removed.', 5))
-                    }
-                  }}
-                />
-              )}
+
+          <div>
+            <Routes>
+              <Route path='/' element={
+                blogs
+                  .sort((a, b) => b.likes - a.likes)
+                  .map(blog =>
+                    <BlogList
+                      key={blog.id}
+                      blog={blog}
+                      currentUser={currentUser}
+                      handleLike={() => {
+                        dispatch(increaseLikes(blog))
+                      }}
+                      handleDelete={() => {
+                        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+                          dispatch(removeBlog(blog.id))
+                          dispatch(setNotification('Blog removed.', 5))
+                        }
+                      }}
+                    />
+                  )
+              } />
+              <Route path='/users' element={<UserList
+                users={users} />
+              } />
+              <Route path='/users/:id' element={<User
+                user={user} />}
+              />
+              <Route path='/blogs/:id' element={<Blog
+                blog={blog} />}
+              />
+            </Routes>
           </div>
         </div>
       }

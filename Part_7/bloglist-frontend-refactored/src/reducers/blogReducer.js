@@ -6,6 +6,8 @@ const blogReducer = (state = [], action) => {
   switch (action.type) {
     case 'INIT_BLOGS':
       return action.data
+    case 'ADD_BLOG':
+      return state.concat(action.data)
     case 'INCREASE_LIKES': {
       const id = action.data.id
       const blogToChange = state.find(blog => blog.id === id)
@@ -25,6 +27,26 @@ const blogReducer = (state = [], action) => {
     }
     default:
       return state
+  }
+}
+
+export const initializeBlogs = () => {
+  return async dispatch => {
+    const blogs = await blogService.getAll()
+    dispatch({
+      type: 'INIT_BLOGS',
+      data: blogs
+    })
+  }
+}
+
+export const addBlog = (blog) => {
+  return async dispatch => {
+    const addedBlog = await blogService.create(blog)
+    dispatch({
+      type: 'ADD_BLOG',
+      data: addedBlog,
+    })
   }
 }
 
@@ -58,14 +80,6 @@ export const increaseLikes = (blog) => {
   }
 }
 
-export const initializeBlogs = () => {
-  return async dispatch => {
-    const blogs = await blogService.getAll()
-    dispatch({
-      type: 'INIT_BLOGS',
-      data: blogs
-    })
-  }
-}
+
 
 export default blogReducer
