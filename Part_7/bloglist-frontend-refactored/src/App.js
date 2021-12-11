@@ -5,7 +5,8 @@ import {
   Routes,
   Route,
   useMatch,
-  Link
+  Link,
+  useNavigate
 } from 'react-router-dom'
 
 import BlogList from './components/BlogList'
@@ -20,7 +21,7 @@ import User from './components/User'
 import loginService from './services/login'
 
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, increaseLikes, removeBlog, addBlog } from './reducers/blogReducer'
+import { initializeBlogs, increaseLikes, removeBlog, addBlog, addComment } from './reducers/blogReducer'
 import { setLoggedUser, setUser } from './reducers/loggedUserReducer'
 import { initializeUsers } from './reducers/userReducer'
 
@@ -33,6 +34,7 @@ const App = () => {
   const blogs = useSelector(state => state.blogs)
   const users = useSelector(state => state.users)
   const currentUser = useSelector(state => state.loggedUser)
+  const navigate = useNavigate()
 
   const userMatch = useMatch('/users/:id')
   const user = userMatch
@@ -47,15 +49,10 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
-  }, [dispatch])
-
-  useEffect(() => {
     dispatch(initializeUsers())
-  }, [dispatch])
-
-  useEffect(() => {
     dispatch(setLoggedUser())
   }, [dispatch])
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -105,12 +102,17 @@ const App = () => {
     </Togglable>
   )
 
+  const createComment = (id, comment) => {
+    dispatch(addComment(id, comment))
+  }
+
   return (
     <div>
       <div>
         <Link style={{ padding: 5 }} to='/'>Home</Link>
         <Link style={{ padding: 5 }} to='/users'>Users</Link>
       </div>
+
       <h1>Blogs</h1>
       <Notification />
 
@@ -118,8 +120,11 @@ const App = () => {
         ? loginForm()
         :
         <div>
-          <p>{currentUser.name} logged in</p>
-          <button onClick={handleLogout}>Logout</button>
+          <p>
+            {currentUser.name} logged in
+            <button onClick={handleLogout}>Logout</button>
+          </p>
+        
           {blogForm()}
 
           <div>
@@ -131,27 +136,32 @@ const App = () => {
                     <BlogList
                       key={blog.id}
                       blog={blog}
-                      currentUser={currentUser}
-                      handleLike={() => {
-                        dispatch(increaseLikes(blog))
-                      }}
-                      handleDelete={() => {
-                        if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-                          dispatch(removeBlog(blog.id))
-                          dispatch(setNotification('Blog removed.', 5))
-                        }
-                      }}
                     />
                   )
               } />
-              <Route path='/users' element={<UserList
-                users={users} />
+              <Route path='/users' element={
+                <UserList users={users} />
               } />
-              <Route path='/users/:id' element={<User
-                user={user} />}
+              <Route path='/users/:id' element={
+                <User user={user} />}
               />
-              <Route path='/blogs/:id' element={<Blog
-                blog={blog} />}
+              <Route path='/blogs/:id' element={
+                <Blog
+                  blog={blog}
+                  currentUser={currentUser.username}
+                  handleLike={() => {
+                    dispatch(increaseLikes(blog))
+                  }}
+                  handleDelete={() => {
+                    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+                      dispatch(removeBlog(blog.id))
+                      navigate('/')
+                      dispatch(setNotification('Blog removed.', 5))
+                    }
+                  }}
+                  createComment={createComment}
+                />
+              }
               />
             </Routes>
           </div>

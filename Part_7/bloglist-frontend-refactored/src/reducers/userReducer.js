@@ -11,7 +11,7 @@ const userReducer = (state = [], action) => {
 
 export const initializeUsers = () => {
   return async dispatch => {
-    const request = await axios.get('http://localhost:3003/api/users')
+    const request = await axios.get('/api/users')
     const users = request.data
     dispatch({
       type: 'INITIALIZE_USERS',
