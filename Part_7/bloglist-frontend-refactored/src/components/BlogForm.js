@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+
 const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({
     title: '',
@@ -23,29 +26,39 @@ const BlogForm = ({ createBlog }) => {
 
   return (
     <div className='formDiv'>
-      <h2>Create a new Blog</h2>
-
-      <form onSubmit={addBlog}>
-        Title: <input
-          id='title'
-          name='title'
-          value={newBlog.title}
-          onChange={handleBlogChange}
-        /><br />
-        Author: <input
-          id='author'
-          name='author'
-          value={newBlog.author}
-          onChange={handleBlogChange}
-        /><br />
-        URL: <input
-          id='url'
-          name='url'
-          value={newBlog.url}
-          onChange={handleBlogChange}
-        /><br />
-        <button id='create-button' type='submit'>Create</button>
-      </form>
+      <Form onSubmit={addBlog}>
+        <Form.Label>Create a new blog</Form.Label>
+        <Form.Group className='mb-3'>
+          <Form.Control
+            id='title'
+            as='input'
+            name='title'
+            placeholder='Enter Title'
+            value={newBlog.title}
+            onChange={handleBlogChange} />
+        </Form.Group>
+        <Form.Group className='mb-3'>
+          <Form.Control
+            id='author'
+            as='input'
+            name='author'
+            placeholder='Enter Author'
+            value={newBlog.author}
+            onChange={handleBlogChange} />
+        </Form.Group>
+        <Form.Group className='mb-3'>
+          <Form.Control
+            id='url'
+            as='input'
+            name='url'
+            placeholder='Enter URL'
+            value={newBlog.url}
+            onChange={handleBlogChange} />
+        </Form.Group>
+        <Form.Group className='mb-3'>
+          <Button variant='outline-dark' id='create-button' type='submit'>Create</Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

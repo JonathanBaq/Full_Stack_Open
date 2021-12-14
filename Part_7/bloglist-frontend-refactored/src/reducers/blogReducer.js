@@ -65,7 +65,6 @@ export const removeBlog = (id) => {
 
 export const increaseLikes = (blog) => {
   const id = blog.id
-  console.log(id)
   const changedBlog = {
     ...blog,
     likes: blog.likes + 1

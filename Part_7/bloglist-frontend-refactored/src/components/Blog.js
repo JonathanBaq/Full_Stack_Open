@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const Blog = ({ blog, currentUser, handleLike, handleDelete, createComment }) => {
   console.log(blog)
+  
   if(!blog) {
     return null
   }
@@ -16,7 +17,7 @@ const Blog = ({ blog, currentUser, handleLike, handleDelete, createComment }) =>
         Likes: {blog.likes}
         <button id='like-button' onClick={handleLike}>like</button>
       </p>
-      <p>Added by {blog.author}</p>
+      <p>Added by {blog.user.name}</p>
       {currentUser === blog.user.username
         ? <button id='delete-button' onClick={handleDelete}>delete</button>
         : ''}
